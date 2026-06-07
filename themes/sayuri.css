@@ -1,0 +1,110 @@
+* {
+    font-family: "Bitstream Vera Sans Mono", "Noto Mono", monospace;
+    font-size: 13px;
+}
+
+window {
+    background-color: #000000;
+    color: #e0e0e0;
+}
+
+.sidebar {
+    background-color: #111111;
+    border-right: 1px solid #222222;
+}
+
+.sidebar-header {
+    background-color: #111111;
+    border-bottom: 1px solid #222222;
+    padding: 12px 16px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #e8a0a0;
+}
+
+.book-row {
+    padding: 8px 16px;
+    color: #e0e0e0;
+    border-left: 3px solid transparent;
+}
+
+.book-row:hover {
+    background-color: #1a1a1a;
+}
+
+.book-row.active {
+    background-color: #1a1a1a;
+    border-left: 3px solid #e8a0a0;
+}
+
+.wagashi-repo-header {
+    background-color: #e8a0a0;
+    color: #000000;
+    padding: 6px 16px;
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.package-row {
+    padding: 10px 16px;
+    border-bottom: 1px solid #1a1a1a;
+    color: #e0e0e0;
+}
+
+.package-row:hover {
+    background-color: #1a1a1a;
+}
+
+.package-name {
+    font-weight: bold;
+    font-size: 13px;
+    color: #ffffff;
+}
+
+.package-desc {
+    font-size: 11px;
+    color: #707070;
+}
+
+.search-bar {
+    background-color: #111111;
+    border: 1px solid #333333;
+    border-radius: 2px;
+    padding: 6px 12px;
+    color: #e0e0e0;
+    margin: 8px;
+}
+
+.install-btn {
+    background-color: #e8a0a0;
+    color: #000000;
+    border: none;
+    border-radius: 2px;
+    padding: 6px 16px;
+    font-weight: bold;
+}
+
+.install-btn:hover {
+    background-color: #f0b0b0;
+}
+
+.remove-btn {
+    background-color: transparent;
+    color: #e8a0a0;
+    border: 1px solid #e8a0a0;
+    border-radius: 2px;
+    padding: 6px 16px;
+}
+
+.remove-btn:hover {
+    background-color: #1a1a1a;
+}
+
+.statusbar {
+    background-color: #111111;
+    border-top: 1px solid #222222;
+    padding: 4px 16px;
+    font-size: 11px;
+    color: #707070;
+}
