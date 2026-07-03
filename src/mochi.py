@@ -298,9 +298,17 @@ class SearchThread(QThread):
     def run(self):
         try:
             r = subprocess.run(["pacman", "-Ss", self.query], capture_output=True, text=True, timeout=15)
-            self.done.emit(parse_pacman_ss(r.stdout))
+            official = parse_pacman_ss(r.stdout)
         except Exception:
-            self.done.emit([])
+            official = []
+        try:
+            r2 = subprocess.run(["yay", "-Ss", "--aur", self.query], capture_output=True, text=True, timeout=20)
+            aur = parse_pacman_ss(r2.stdout)
+        except Exception:
+            aur = []
+        seen = {p["name"] for p in official}
+        combined = official + [p for p in aur if p["name"] not in seen]
+        self.done.emit(combined[:80])
 
 
 class InstalledThread(QThread):
