@@ -716,6 +716,15 @@ class MochiWindow(QMainWindow):
         tlay.setContentsMargins(14, 10, 14, 10)
         tlay.setSpacing(10)
 
+        self.back_btn = QPushButton("← Back")
+        self.back_btn.setFixedHeight(38)
+        self.back_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.back_btn.setFont(mk_font(11))
+        self.back_btn.setStyleSheet(
+            f"QPushButton{{background:transparent;color:{t['text_muted']};border:1.5px solid {t['hover']};border-radius:{INNER_RADIUS}px;padding:0 14px;}}"
+            f"QPushButton:hover{{background:{t['hover']};color:{t['accent']};}}")
+        self.back_btn.clicked.connect(self._show_categories)
+        self.back_btn.hide()
         self.search_box = QLineEdit()
         self.search_box.setPlaceholderText("Search packages...")
         self.search_box.setFixedHeight(38)
@@ -747,6 +756,7 @@ class MochiWindow(QMainWindow):
         )
         self.refresh_btn.clicked.connect(lambda: self._on_nav("updates"))
 
+        tlay.addWidget(self.back_btn)
         tlay.addWidget(self.search_box)
         tlay.addWidget(self.update_all_btn)
         tlay.addWidget(self.refresh_btn)
@@ -838,6 +848,7 @@ class MochiWindow(QMainWindow):
     def _on_nav(self, cat_id):
         self._active_nav = cat_id
         self._set_active(cat_id)
+        self.back_btn.hide()
         if cat_id != "updates":
             self.update_all_btn.hide()
         if cat_id == "wagashi":
@@ -940,6 +951,7 @@ class MochiWindow(QMainWindow):
         self.status.setText(f"{len(CATEGORIES)} categories")
 
     def _show_category(self, category):
+        self.back_btn.show()
         self._current_header = f"{category['icon']}  {category['label'].upper()}"
         self._clear_list()
         self.list_layout.addWidget(SectionHeader(self._current_header, self.theme))
