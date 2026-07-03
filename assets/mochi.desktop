@@ -1,0 +1,10 @@
+[Desktop Entry]
+Type=Application
+Name=Mochi
+GenericName=Package Manager
+Comment=Graphical package manager for Wagashi Linux
+Exec=mochi
+Icon=mochi
+Categories=System;PackageManager;
+Keywords=packages;install;software;dango;wagashi;
+StartupNotify=true
