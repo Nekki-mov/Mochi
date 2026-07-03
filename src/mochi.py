@@ -480,6 +480,7 @@ class PackageRow(QFrame):
         th = ActionThread(self.pkg["name"], mode)
         th.done.connect(self._on_done)
         self._threads.append(th)
+        th.finished.connect(lambda t=th: self._threads.remove(t) if t in self._threads else None)
         th.start()
 
     def _on_done(self, code, stdout, stderr):
@@ -498,7 +499,9 @@ class PackageRow(QFrame):
                 return
             self._style_btn(self.pkg["mode"])
         else:
-            self.btn.setText("Error")
+            original = {"install": "Install", "remove": "Remove", "update": "Update"}
+            self.btn.setText(original.get(self.pkg.get("mode", "install"), "Install"))
+            self._style_btn(self.pkg.get("mode", "install"))
 
 
 class RowDivider(QFrame):
@@ -632,6 +635,7 @@ class MochiWindow(QMainWindow):
         self._threads = []
         self._current_header = None
         self._pending_updates = []
+        self._active_nav = "wagashi"
         self._build()
         self._show_wagashi()
 
@@ -832,6 +836,7 @@ class MochiWindow(QMainWindow):
     # ── Navigation ──
 
     def _on_nav(self, cat_id):
+        self._active_nav = cat_id
         self._set_active(cat_id)
         if cat_id != "updates":
             self.update_all_btn.hide()
@@ -845,6 +850,7 @@ class MochiWindow(QMainWindow):
             th = InstalledThread()
             th.done.connect(lambda pkgs: self._render(None, pkgs))
             self._threads.append(th)
+            th.finished.connect(lambda t=th: self._threads.remove(t) if t in self._threads else None)
             th.start()
         elif cat_id == "updates":
             self.status.setText("Checking for updates...")
@@ -852,6 +858,7 @@ class MochiWindow(QMainWindow):
             th = UpdatesThread()
             th.done.connect(self._on_updates_result)
             self._threads.append(th)
+            th.finished.connect(lambda t=th: self._threads.remove(t) if t in self._threads else None)
             th.start()
 
     def _on_updates_result(self, packages):
@@ -877,6 +884,7 @@ class MochiWindow(QMainWindow):
         th.line_received.connect(self._on_update_line)
         th.done.connect(self._on_update_all_done)
         self._threads.append(th)
+        th.finished.connect(lambda t=th: self._threads.remove(t) if t in self._threads else None)
         th.start()
 
     def _on_update_line(self, line):
@@ -910,6 +918,7 @@ class MochiWindow(QMainWindow):
             {**p, "mode": "remove" if p.get("installed") else "install"} for p in pkgs
         ]))
         self._threads.append(th)
+        th.finished.connect(lambda t=th: self._threads.remove(t) if t in self._threads else None)
         th.start()
 
     def _show_wagashi(self):
@@ -940,6 +949,7 @@ class MochiWindow(QMainWindow):
         th = CategoryThread(category)
         th.done.connect(lambda pkgs: self._render(self._current_header, pkgs))
         self._threads.append(th)
+        th.finished.connect(lambda t=th: self._threads.remove(t) if t in self._threads else None)
         th.start()
 
     def _toggle_theme(self):
@@ -953,7 +963,7 @@ class MochiWindow(QMainWindow):
         central = QWidget()
         self.setCentralWidget(central)
         self._build_into(central)
-        self._show_wagashi()
+        self._on_nav(self._active_nav)
 
 
 # ─── Entry ────────────────────────────────────────────────────────────────────
