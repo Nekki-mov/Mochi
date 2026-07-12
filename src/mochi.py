@@ -395,26 +395,47 @@ class ActionThread(QThread):
 class UpdateAllThread(QThread):
     line_received = pyqtSignal(str)
     done = pyqtSignal(int, str, str)
+
     def run(self):
-        if has_dango():
-            cmd = ["dango", "-Syu"]
-        else:
-            cmd = ["pkexec", "pacman", "-Syu", "--noconfirm"]
+        cmd = [
+            "pkexec",
+            "/usr/bin/pacman",
+            "-Syu",
+            "--noconfirm",
+        ]
+
         full_output = []
+
         try:
             proc = subprocess.Popen(
-                cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                text=True, bufsize=1, universal_newlines=True
+                cmd,
+                stdout=subprocess.PIPE,
+                stderr=subprocess.STDOUT,
+                text=True,
+                bufsize=1,
             )
-            for line in proc.stdout:
-                line = line.rstrip()
-                if line:
-                    full_output.append(line)
-                    self.line_received.emit(line)
-            proc.wait(timeout=900)
-            self.done.emit(proc.returncode, chr(10).join(full_output), "")
+
+            if proc.stdout is not None:
+                for line in proc.stdout:
+                    line = line.rstrip()
+                    if line:
+                        full_output.append(line)
+                        self.line_received.emit(line)
+
+            returncode = proc.wait(timeout=900)
+
+            self.done.emit(
+                returncode,
+                "\n".join(full_output),
+                "",
+            )
+
         except Exception as e:
-            self.done.emit(-1, chr(10).join(full_output), str(e))
+            self.done.emit(
+                -1,
+                "\n".join(full_output),
+                str(e),
+            )
 
 
 # ─── UI helpers ───────────────────────────────────────────────────────────────
