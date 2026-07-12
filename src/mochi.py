@@ -328,16 +328,31 @@ class InstalledThread(QThread):
 
 class UpdatesThread(QThread):
     done = pyqtSignal(list)
+
     def run(self):
         try:
-            cmd = ["dango", "-Qu"] if has_dango() else ["pacman", "-Qu"]
-            r = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            r = subprocess.run(
+                ["/usr/bin/pacman", "-Qu"],
+                capture_output=True,
+                text=True,
+                timeout=30,
+            )
+
             pkgs = []
-            for line in r.stdout.strip().split("\n"):
+
+            for line in r.stdout.strip().splitlines():
                 parts = line.split()
-                if len(parts) >= 2:
-                    pkgs.append({"name": parts[0], "version": parts[1], "desc": "Update available", "mode": "update"})
+
+                if len(parts) >= 4 and parts[2] == "->":
+                    pkgs.append({
+                        "name": parts[0],
+                        "version": f"{parts[1]} → {parts[3]}",
+                        "desc": "Update available",
+                        "mode": "update",
+                    })
+
             self.done.emit(pkgs)
+
         except Exception:
             self.done.emit([])
 
